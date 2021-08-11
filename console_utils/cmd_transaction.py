@@ -84,7 +84,6 @@ call合约的一个只读接口,解析返回值,address可以是last或latest,�
         )
 
         try:
-            print("----------------1\n")
             receipt = tx_client.send_transaction_getReceipt(
                 None, fn_args, isdeploy=True
             )[0]
@@ -152,7 +151,6 @@ call合约的一个只读接口,解析返回值,address可以是last或latest,�
         # )
         try:
             result = tx_client.call_and_decode(fn_name, fn_args)
-            print("-----------------result:",result)
             common.print_tx_result(result)
 
         except Exception as e:

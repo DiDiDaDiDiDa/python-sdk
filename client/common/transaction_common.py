@@ -58,7 +58,6 @@ class TransactionCommon(bcosclient.BcosClient):
                                            contract_name, contract_path))
         # print("contract_abi_path {}, contract_bin_path {}".format(self.contract_abi_path,self.contract_bin_path))
 
-        print("----------------7\n")
         self.dataparser = None
         if os.path.exists(self.contract_bin_path):
             self.dataparser = DatatypeParser(self.contract_abi_path)
@@ -96,10 +95,8 @@ class TransactionCommon(bcosclient.BcosClient):
         send transactions to CNS contract with the givn function name and args
         """
         try:
-            print("----------------2\n")
             contract_abi, args = self.format_abi_args(fn_name, fn_args, isdeploy)
 
-            print("----------------3\n")
             contract_bin = None
             if isdeploy is True and os.path.exists(self.contract_bin_path) is True:
                 with open(self.contract_bin_path,"rb") as f:
@@ -122,7 +119,6 @@ class TransactionCommon(bcosclient.BcosClient):
                                                            from_account_signer=from_account_signer
                                                            )
 
-            print("----------------4\n")
             # check status
             if "status" not in receipt.keys() or \
                     "output" not in receipt.keys():
@@ -137,7 +133,6 @@ class TransactionCommon(bcosclient.BcosClient):
             if error_message is not None:
                 raise BcosException("call error, error message: {}".format(error_message))
 
-            print("----------------5\n")
             if receipt["output"] is None:
                 raise TransactionException(receipt, ("send transaction failed,"
                                                      "status: {}, gasUsed: {}").
@@ -148,7 +143,6 @@ class TransactionCommon(bcosclient.BcosClient):
             else:
                 output = None
 
-            print("----------------6\n")
             return (receipt, output)
         except BcosError as e:
             self.logger.error("send transaction failed, fn_name: {}, fn_args:{}, error_info:{}".
