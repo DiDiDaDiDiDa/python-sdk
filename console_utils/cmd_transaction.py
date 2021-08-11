@@ -25,7 +25,7 @@ from console_utils.console_common import fill_params
 from console_utils.console_common import list_files
 from console_utils.console_common import print_receipt_logs_and_txoutput
 
-contracts_dir = "contracts"
+# contracts_dir = "contracts"
 
 
 class CmdTransaction:
@@ -54,14 +54,19 @@ call合约的一个只读接口,解析返回值,address可以是last或latest,�
     def deploy(self, inputparams):
         print(inputparams)
         if len(inputparams) == 0:
-            sols = list_files(contracts_dir + "/*.sol")
-            for sol in sols:
-                print(sol + ".sol")
+            # sols = list_files(contracts_dir + "/*.sol")
+            # for sol in sols:
+            #     print(sol + ".sol")
+            print("请输入对应参数!!!")
             return
         """deploy abi bin file"""
         # must be at least 2 params
-        common.check_param_num(inputparams, 1)
-        contractname = inputparams[0].strip()
+        common.check_param_num(inputparams, 2)
+        paramsname = ["contractname", "contractpath"]
+        params = fill_params(inputparams, paramsname)
+        contractname = params["contractname"]
+        contract_dir = params["contractpath"]
+        # contractname = inputparams[0].strip()
         # need save address whether or not
         needSaveAddress = True
         args_len = len(inputparams)
@@ -72,41 +77,42 @@ call合约的一个只读接口,解析返回值,address可以是last或latest,�
             needSaveAddress = True
             args_len = len(inputparams) - 1
         # get the args
-        fn_args = inputparams[1:args_len]
+        fn_args = inputparams[2:args_len]
 
         tx_client = transaction_common.TransactionCommon(
-            "", contracts_dir, contractname
+            "", contract_dir, contractname
         )
 
         try:
             receipt = tx_client.send_transaction_getReceipt(
                 None, fn_args, isdeploy=True
             )[0]
-            print("INFO >> client info: {}".format(tx_client.getinfo()))
-            print(
-                "deploy result  for [{}] is:\n {}".format(
-                    contractname, json.dumps(receipt, indent=4)
-                )
-            )
-            name = contractname
-            address = receipt["contractAddress"]
-            blocknum = int(receipt["blockNumber"], 16)
-            txhash = receipt["transactionHash"]
-            ContractNote.save_contract_address(name, address)
-            print("on block : {},address: {} ".format(blocknum, address))
-            if needSaveAddress is True:
-                ContractNote.save_address_to_contract_note(name, address)
-                print("address save to file: ", client_config.contract_info_file)
-            else:
-                print(
-                    """\nNOTE : if want to save new address as last
-                    address for (call/sendtx)\nadd 'save' to cmdline and run again"""
-                )
-            ContractNote.save_history(name, address, blocknum, txhash)
-            contractabi = tx_client.contract_abi_path
-            data_parser = DatatypeParser(contractabi)
-            # 解析receipt里的log 和 相关的tx ,output
-            print_receipt_logs_and_txoutput(tx_client, receipt, "", data_parser)
+            print(receipt)
+            # print("INFO >> client info: {}".format(tx_client.getinfo()))
+            # print(
+            #     "deploy result  for [{}] is:\n {}".format(
+            #         contractname, json.dumps(receipt, indent=4)
+            #     )
+            # )
+            # name = contractname
+            # address = receipt["contractAddress"]
+            # blocknum = int(receipt["blockNumber"], 16)
+            # txhash = receipt["transactionHash"]
+            # ContractNote.save_contract_address(name, address)
+            # print("on block : {},address: {} ".format(blocknum, address))
+            # if needSaveAddress is True:
+            #     ContractNote.save_address_to_contract_note(name, address)
+            #     print("address save to file: ", client_config.contract_info_file)
+            # else:
+            #     print(
+            #         """\nNOTE : if want to save new address as last
+            #         address for (call/sendtx)\nadd 'save' to cmdline and run again"""
+            #     )
+            # ContractNote.save_history(name, address, blocknum, txhash)
+            # contractabi = tx_client.contract_abi_path
+            # data_parser = DatatypeParser(contractabi)
+            # # 解析receipt里的log 和 相关的tx ,output
+            # print_receipt_logs_and_txoutput(tx_client, receipt, "", data_parser)
         except Exception as e:
             print("deploy exception! ", e)
             traceback.print_exc()
@@ -114,14 +120,16 @@ call合约的一个只读接口,解析返回值,address可以是last或latest,�
 
     def call(self, inputparams):
         if len(inputparams) == 0:
-            sols = list_files(contracts_dir + "/*.sol")
-            for sol in sols:
-                print(sol + ".sol")
+            # sols = list_files(contracts_dir + "/*.sol")
+            # for sol in sols:
+            #     print(sol + ".sol")
+            print("请输入对应参数!!!")
             return
-        common.check_param_num(inputparams, 3)
-        paramsname = ["contractname", "address", "func"]
+        common.check_param_num(inputparams, 4)
+        paramsname = ["contractname","contractpath", "address", "func"]
         params = fill_params(inputparams, paramsname)
         contractname = params["contractname"]
+        contract_dir = params["contractpath"]
         address = params["address"]
         if address == "last" or address == "latest":
             address = ContractNote.get_last(contractname)
@@ -131,18 +139,19 @@ call合约的一个只读接口,解析返回值,address可以是last或latest,�
                 )
 
         tx_client = transaction_common.TransactionCommon(
-            address, contracts_dir, contractname
+            address, contract_dir, contractname
         )
         fn_name = params["func"]
-        fn_args = inputparams[3:]
-        print("INFO>> client info: {}".format(tx_client.getinfo()))
-        print(
-            "INFO >> call {} , address: {}, func: {}, args:{}".format(
-                contractname, address, fn_name, fn_args
-            )
-        )
+        fn_args = inputparams[4:]
+        # print("INFO>> client info: {}".format(tx_client.getinfo()))
+        # print(
+        #     "INFO >> call {} , address: {}, func: {}, args:{}".format(
+        #         contractname, address, fn_name, fn_args
+        #     )
+        # )
         try:
             result = tx_client.call_and_decode(fn_name, fn_args)
+            print("-----------------result:",result)
             common.print_tx_result(result)
 
         except Exception as e:
@@ -153,14 +162,16 @@ call合约的一个只读接口,解析返回值,address可以是last或latest,�
     # 如果自己写代码调用，则可以指定不同的账户了
     def sendtx(self, inputparams):
         if len(inputparams) == 0:
-            sols = list_files(contracts_dir + "/*.sol")
-            for sol in sols:
-                print(sol + ".sol")
+            # sols = list_files(contracts_dir + "/*.sol")
+            # for sol in sols:
+            #     print(sol + ".sol")
+            print("请输入对应参数!!!")
             return
-        common.check_param_num(inputparams, 3)
-        paramsname = ["contractname", "address", "func"]
+        common.check_param_num(inputparams, 4)
+        paramsname = ["contractname", "contractpath", "address", "func"]
         params = fill_params(inputparams, paramsname)
         contractname = params["contractname"]
+        contract_dir = params["contractpath"]
         address = params["address"]
         if address == "last" or address == "latest":
             address = ContractNote.get_last(contractname)
@@ -170,16 +181,16 @@ call合约的一个只读接口,解析返回值,address可以是last或latest,�
                 )
 
         tx_client = transaction_common.TransactionCommon(
-            address, contracts_dir, contractname
+            address, contract_dir, contractname
         )
         fn_name = params["func"]
-        fn_args = inputparams[3:]
-        print("INFO>> client info: {}".format(tx_client.getinfo()))
-        print(
-            "INFO >> sendtx {} , address: {}, func: {}, args:{}".format(
-                contractname, address, fn_name, fn_args
-            )
-        )
+        fn_args = inputparams[4:]
+        # print("INFO>> client info: {}".format(tx_client.getinfo()))
+        # print(
+        #     "INFO >> sendtx {} , address: {}, func: {}, args:{}".format(
+        #         contractname, address, fn_name, fn_args
+        #     )
+        # )
         try:
             from_account_signer = None
             # from_account_signer = Signer_ECDSA.from_key_file(
