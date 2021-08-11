@@ -43,7 +43,7 @@ class CommandParser:
         argcomplete.autocomplete(parser)
         args = parser.parse_args()
 
-        print("\nINFO >> user input : {}\n".format(args.cmd))
+        # print("\nINFO >> user input : {}\n".format(args.cmd))
         cmd = args.cmd[0]
         inputparams = args.cmd[1:]
         return cmd, inputparams
