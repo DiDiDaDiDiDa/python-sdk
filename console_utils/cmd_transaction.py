@@ -87,7 +87,7 @@ call合约的一个只读接口,解析返回值,address可以是last或latest,�
             receipt = tx_client.send_transaction_getReceipt(
                 None, fn_args, isdeploy=True
             )[0]
-            print(">>>>>>>>>xwbaas>>>>>>>>>>",json.dumps(receipt),"<<<<<<<<<<xwbaas<<<<<<<<<")
+            print(">>>>>>>>>xwbaas>>>>>>>>>>",json.dumps(receipt),">>>>>>>>>xwbaas>>>>>>>>>>")
             # print("INFO >> client info: {}".format(tx_client.getinfo()))
             # print(
             #     "deploy result  for [{}] is:\n {}".format(
@@ -159,6 +159,7 @@ call合约的一个只读接口,解析返回值,address可以是last或latest,�
     # 2021.02版本已经支持创建不同的账户来发送交易，考虑到python命令行控制台的输入繁琐（也不像java控制台这样是预加载账户
     # 所以暂时未支持在控制台命令行传入账户名，如需用不同账户发送交易，可以切换到不同的目录或配置文件
     # 如果自己写代码调用，则可以指定不同的账户了
+    # noinspection PyInterpreter
     def sendtx(self, inputparams):
         if len(inputparams) == 0:
             # sols = list_files(contracts_dir + "/*.sol")
@@ -199,6 +200,12 @@ call合约的一个只读接口,解析返回值,address可以是last或latest,�
             # 参见国密（client.GM_Account）和非国密的account管理类LocalAccount
             (receipt, output) = tx_client.send_transaction_getReceipt(
                 fn_name, fn_args, from_account_signer=from_account_signer)
+            print(
+                "INFO >> receipt {} , output: {}".format(
+                    receipt, output
+                )
+            )
+
             data_parser = DatatypeParser(tx_client.contract_abi_path)
             # 解析receipt里的log 和 相关的tx ,output
             print_receipt_logs_and_txoutput(tx_client, receipt, "", data_parser)

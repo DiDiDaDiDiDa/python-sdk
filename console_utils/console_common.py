@@ -100,7 +100,7 @@ def default_abi_file(contractname):
     return abi_file
 
 
-def print_receipt_logs_and_txoutput(client, receipt, contractname, parser=None):
+def print_receipt_logs_and_txoutput(client, receipt, contractname, parser=None, json=None):
     print("INFO >>  transaction from account :", receipt["from"])
     print("INFO >>  receipt logs : ")
     # 解析receipt里的log
@@ -108,7 +108,7 @@ def print_receipt_logs_and_txoutput(client, receipt, contractname, parser=None):
         parser = DatatypeParser(default_abi_file(contractname))
     logresult = parser.parse_event_logs(receipt["logs"])
     i = 0
-    # print(json.dumps(logresult,indent=4))
+    print(json.dumps(logresult,indent=4))
     for log in logresult:
         if "eventname" in log:
             i = i + 1
