@@ -12,6 +12,8 @@
   @author: kentzhang
   @date: 2020-10
 '''
+
+import json
 import importlib
 import glob
 
@@ -100,7 +102,7 @@ def default_abi_file(contractname):
     return abi_file
 
 
-def print_receipt_logs_and_txoutput(client, receipt, contractname, parser=None, json=None):
+def print_receipt_logs_and_txoutput(client, receipt, contractname, parser=None):
     print("INFO >>  transaction from account :", receipt["from"])
     print("INFO >>  receipt logs : ")
     # 解析receipt里的log
