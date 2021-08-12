@@ -200,15 +200,11 @@ call合约的一个只读接口,解析返回值,address可以是last或latest,�
             # 参见国密（client.GM_Account）和非国密的account管理类LocalAccount
             (receipt, output) = tx_client.send_transaction_getReceipt(
                 fn_name, fn_args, from_account_signer=from_account_signer)
-            print(
-                "INFO >> receipt {} , output: {}".format(
-                    receipt, output
-                )
-            )
+            print(json.dumps(receipt))
 
-            data_parser = DatatypeParser(tx_client.contract_abi_path)
-            # 解析receipt里的log 和 相关的tx ,output
-            print_receipt_logs_and_txoutput(tx_client, receipt, "", data_parser)
+            # data_parser = DatatypeParser(tx_client.contract_abi_path)
+            # # 解析receipt里的log 和 相关的tx ,output
+            # print_receipt_logs_and_txoutput(tx_client, receipt, "", data_parser)
         except Exception as e:
             common.print_error_msg("sendtx", e)
 
