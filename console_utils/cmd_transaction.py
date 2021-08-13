@@ -151,7 +151,8 @@ call合约的一个只读接口,解析返回值,address可以是last或latest,�
         # )
         try:
             result = tx_client.call_and_decode(fn_name, fn_args)
-            common.print_tx_result(result)
+            # common.print_tx_result(result)
+            print("{}".format(result))
 
         except Exception as e:
             common.print_error_msg("call", e)
