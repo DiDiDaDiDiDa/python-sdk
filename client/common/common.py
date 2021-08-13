@@ -284,7 +284,7 @@ def print_tx_result(outputresults):
             print("{}, ".format(bytesToHex(result)))
             continue
         # print("tx reuslt: {}, ".format(result))
-        print("{}, ".format(result))
+        print("{}".format(result))
 
 
 def check_result(result):
